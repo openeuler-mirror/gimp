@@ -1,14 +1,12 @@
 Name:     gimp
 Version:  2.10.6
-Release:  3
+Release:  4
 Epoch:    2
 Summary:  A versatile graphics manipulation package
 License:  GPLv3+ and GPLv3 and LGPLv3+
 URL:      http://www.gimp.org/
 
 Source0:        http://download.gimp.org/pub/gimp/v2.10/gimp-2.10.6.tar.bz2
-Patch1:         gimp-2.10.0-cm-system-monitor-profile-by-default.patch
-Patch2:         gimp-2.10.0-external-help-browser.patch
 Patch6000:      backport-CVE-2018-12713.patch
 
 %global apiversion 2.0
@@ -276,5 +274,11 @@ make check %{?_smp_mflags}
 %{_mandir}/man*/*
 
 %changelog
+* Sun Jan 19 2020 daiqianwen <daiqianwen@huawei.com> - 2:2.10.6-4
+- Type:bugfix
+- ID:NA
+- SUG:NA
+- DESC: modify spec
+
 * Fri Dec 13 2019 openEuler Buildteam <buildteam@openeuler.org> - 2:2.10.6-3
 - Package init
