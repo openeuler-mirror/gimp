@@ -1,10 +1,10 @@
-Name:     gimp
-Version:  2.10.6
-Release:  4
-Epoch:    2
-Summary:  A versatile graphics manipulation package
-License:  GPLv3+ and GPLv3 and LGPLv3+
-URL:      http://www.gimp.org/
+Name:           gimp
+Version:        2.10.6
+Release:        5
+Epoch:          2
+Summary:        A versatile graphics manipulation package
+License:        GPLv3+ and GPLv3
+URL:            http://www.gimp.org/
 
 Source0:        http://download.gimp.org/pub/gimp/v2.10/gimp-2.10.6.tar.bz2
 Patch6000:      backport-CVE-2018-12713.patch
@@ -22,17 +22,14 @@ BuildRequires:  poppler-data-devel >= 0.4.7 pycairo-devel >= 1.0.2 pygtk2-devel 
 BuildRequires:  perl >= 5.10.0 libappstream-glib gtk-doc >= 1.0 gegl04-tools libXpm-devel pkgconfig zlib-devel
 BuildRequires:  libXmu-devel gettext >= 0.19 chrpath >= 0.13-5 intltool >= 0.40.1
 
-Requires:       babl%{?_isa} >= 0.1.56 fontconfig >= 2.12.4 freetype >= 2.1.7 pango >= 1.29.4 xdg-utils gimp-libs%{?_isa} = 2:2.10.6-2.h1
+Requires:       babl%{?_isa} >= 0.1.56 fontconfig >= 2.12.4 freetype >= 2.1.7 pango >= 1.29.4 xdg-utils %{name}-libs = %{epoch}:%{version}-%{release}
 Requires:       gegl04%{?_isa} >= 0.4.6 glib2 >= 2.54.0 gtk2 >= 2.24.10 pygtk2 >= 2.10.4 hicolor-icon-theme
+Requires:       %{name}-libs = %{epoch}:%{version}-%{release}
 
-Obsoletes:      gimp-help-browser < 2:2.10.6-2.h1
-Conflicts:      gimp-help-browser < 2:2.10.6-2.h1
+Obsoletes:      gimp-help-browser < %{epoch}:%{version}-%{release}
+Conflicts:      gimp-help-browser < %{epoch}:%{version}-%{release}
 Obsoletes:      gimp-unstable < 2:2.10
 Conflicts:      gimp-unstable < 2:2.10
-Provides:       %{name}-libs%{?_isa} %{name}-libs
-Obsoletes:      %{name}-libs
-Obsoletes:      gimp-unstable-libs < 2:2.10
-Conflicts:      gimp-unstable-libs < 2:2.10
 
 %description
 GIMP is a cross-platform image editor available for GNU/Linux, OS X, Windows and more operating systems.
@@ -41,12 +38,21 @@ Whether you are a graphic designer, photographer, illustrator, or scientist,
 GIMP provides you with sophisticated tools to get your job done. You can further enhance
 your productivity with GIMP thanks to many customization options and 3rd party plugins.
 
+%package        libs
+Summary:        Libraries for %{name}
+License:        LGPLv3+
 
-%package devel
+Obsoletes:      gimp-unstable-libs < 2:2.10
+Conflicts:      gimp-unstable-libs < 2:2.10
+
+%description    libs
+Libraries for %{name}.
+
+%package        devel
 Summary:        GIMP development kit
 License:        LGPLv3+
-Requires:       gimp-libs%{?_isa} = 2:2.10.6-2.h1 glib2-devel rpm >= 4.11.0
-Requires:       gimp-devel-tools = 2:2.10.6-2.h1 gtk2-devel pkgconfig
+Requires:       gimp-libs = %{epoch}:%{version}-%{release} glib2-devel rpm >= 4.11.0
+Requires:       gimp-devel-tools = %{epoch}:%{version}-%{release} gtk2-devel pkgconfig
 
 Provides:       %{name}-devel-tools%{?_isa} %{name}-devel-tools
 Obsoletes:      %{name}-devel-tools
@@ -55,9 +61,8 @@ Conflicts:      gimp-unstable-devel < 2:2.10
 Obsoletes:      gimp-unstable-devel-tools < 2:2.10
 Conflicts:      gimp-unstable-devel-tools < 2:2.10
 
-%description devel
+%description    devel
 GIMP development kit
-
 
 %package        help
 Summary:        Including man files for gimp
@@ -66,14 +71,10 @@ Requires:       man
 %description    help
 This contains man files for the using of gimp.
 
-
 %prep
-
 %autosetup -n %{name}-%{version} -p1
 
 %build
-
-
 %configure \
     --enable-mp \
     --enable-python \
@@ -104,7 +105,6 @@ This contains man files for the using of gimp.
     --with-libxpm
 
 %make_build
-
 
 gimp_pc_extract_normalize() {
     PKG_CONFIG_PATH="$PWD" \
@@ -143,20 +143,15 @@ cat << EOF > macros.gimp
 %%_gimp_plugindir ${_gimp_plugindir}
 EOF
 
-
-
 %install
-
 %make_install
 install -D -m0644 macros.gimp %{buildroot}%{_rpmconfigdir}/macros.d/macros.gimp
 find %buildroot -type f -print0 | xargs -0 -L 20 chrpath --delete --keepgoing 2>/dev/null || :
-
 
 %delete_la
 
 find %{buildroot}%{_libdir}/gimp/%{apiversion}/* -type d | sed "s@^%{buildroot}@%%dir @g" >> gimp-plugin-files
 find %{buildroot}%{_libdir}/gimp/%{apiversion} -type f | sed "s@^%{buildroot}@@g" | grep -v '\.a$' > gimp-plugin-files
-
 
 grep "\.py$" gimp-plugin-files > gimp-plugin-files-py
 for file in $(cat gimp-plugin-files-py); do
@@ -165,11 +160,7 @@ for file in $(cat gimp-plugin-files-py); do
     done
 done >> gimp-plugin-files
 
-
 %py_byte_compile %{__python2} %{buildroot}%{_libdir}/gimp/%{apiversion}
-
-
-
 
 %find_lang gimp%{textversion}
 %find_lang gimp%{textversion}-libgimp
@@ -178,7 +169,6 @@ done >> gimp-plugin-files
 %find_lang gimp%{textversion}-std-plug-ins
 %find_lang gimp%{textversion}-script-fu
 
-
 cat gimp%{textversion}.lang \
     gimp%{textversion}-std-plug-ins.lang \
     gimp%{textversion}-script-fu.lang \
@@ -186,10 +176,7 @@ cat gimp%{textversion}.lang \
     gimp%{textversion}-tips.lang \
     gimp%{textversion}-python.lang > gimp-all.lang
 
-
 cat gimp-plugin-files gimp-all.lang > gimp.files
-
-
 
 ln -snf gimp-%{allversion} %{buildroot}%{_bindir}/gimp
 ln -snf gimp-%{allversion}.1 %{buildroot}%{_mandir}/man1/gimp.1
@@ -199,20 +186,16 @@ ln -snf gimptool-%{apiversion}.1 %{buildroot}%{_mandir}/man1/gimptool.1
 ln -snf gimprc-%{allversion}.5 %{buildroot}/%{_mandir}/man5/gimprc.5
 ln -snf gimp-console-%{allversion}.1 %{buildroot}/%{_mandir}/man1/gimp-console.1
 
-
 grep -E -rl '^#!\s*%{_bindir}/env\s+python' --include=\*.py "%{buildroot}" |
     while read file; do
         sed -r '1s,^#!\s*%{_bindir}/env\s+python,#!%{__python},' -i "$file"
     done
 
-
-
 %check
 
 make check %{?_smp_mflags}
 
-%ldconfig_scriptlets
-
+%ldconfig_scriptlets libs
 
 %files -f gimp.files
 %license COPYING
@@ -233,7 +216,6 @@ make check %{?_smp_mflags}
 %{_datadir}/metainfo/*.metainfo.xml
 %{_datadir}/gimp/2.0/*
 
-
 %dir /etc/gimp
 %dir /etc/gimp/2.0
 %config(noreplace) /etc/gimp/2.0/controllerrc
@@ -252,8 +234,8 @@ make check %{?_smp_mflags}
 /usr/libexec/gimp-debug-tool-2.0
 /usr/share/icons/hicolor/*/apps/gimp.png
 
+%files libs
 %{_libdir}/libgimp*so.*
-
 
 %files devel
 %doc HACKING README.i18n
@@ -269,11 +251,16 @@ make check %{?_smp_mflags}
 /usr/bin/gimptool-2.0
 /usr/bin/gimptool
 
-
 %files help
 %{_mandir}/man*/*
 
 %changelog
+* Mon Feb 17 2020 hexiujun <hexiujun1@huawei.com> - 2:2.10.6-5
+- Type:enhancement
+- ID:NA
+- SUG:NA
+- DESC:unpack libs subpackage
+
 * Sun Jan 19 2020 daiqianwen <daiqianwen@huawei.com> - 2:2.10.6-4
 - Type:bugfix
 - ID:NA
