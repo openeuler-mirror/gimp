@@ -1,6 +1,6 @@
 Name:           gimp
 Version:        2.10.6
-Release:        7
+Release:        8
 Epoch:          2
 Summary:        A versatile graphics manipulation package
 License:        GPLv3+ and GPLv3
@@ -254,6 +254,9 @@ make check %{?_smp_mflags}
 %{_mandir}/man*/*
 
 %changelog
+* Tue May 19 2020 fengtao <fengtao40@huawei.com> - 2:2.10.6-8
+- rebuild for libwebp-1.1.0
+
 * Sat Mar 21 2020 hexiujun <hexiujun1@huawei.com> - 2:2.10.6-7
 - Type:NA
 - ID:NA
