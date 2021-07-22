@@ -1,6 +1,6 @@
 Name:           gimp
 Version:        2.10.6
-Release:        8
+Release:        9
 Epoch:          2
 Summary:        A versatile graphics manipulation package
 License:        GPLv3+ and GPLv3
@@ -20,7 +20,7 @@ BuildRequires:  libgs-devel iso-codes-devel libjpeg-devel libmng-devel libwebp-d
 BuildRequires:  libwmf-devel >= 0.2.8 libmypaint-devel >= 1.3.0 mypaint-brushes-devel >= 1.3.0 OpenEXR-devel >= 1.6.1 openjpeg2-devel >= 2.1.0
 BuildRequires:  poppler-data-devel >= 0.4.7 pycairo-devel >= 1.0.2 pygtk2-devel >= 2.10.4 pygobject2-devel python2-devel >= 2.5.0 xz-devel >= 5.0.0
 BuildRequires:  perl >= 5.10.0 libappstream-glib gtk-doc >= 1.0 gegl04-tools libXpm-devel pkgconfig zlib-devel
-BuildRequires:  libXmu-devel gettext >= 0.19 chrpath >= 0.13-5 intltool >= 0.40.1 gdb
+BuildRequires:  libXmu-devel gettext >= 0.19 chrpath >= 0.13-5 intltool >= 0.40.1
 
 Requires:       babl%{?_isa} >= 0.1.56 fontconfig >= 2.12.4 freetype >= 2.1.7 pango >= 1.29.4 xdg-utils %{name}-libs = %{epoch}:%{version}-%{release}
 Requires:       gegl04%{?_isa} >= 0.4.6 glib2 >= 2.54.0 gtk2 >= 2.24.10 pygtk2 >= 2.10.4 hicolor-icon-theme
@@ -254,6 +254,9 @@ make check %{?_smp_mflags}
 %{_mandir}/man*/*
 
 %changelog
+* Thu 22 Jul 2021 sunguoshuai <sunguoshuai@huawei.com> - 2:2.10.6-9
+- Del useless buildrequire gdb
+
 * Tue May 19 2020 fengtao <fengtao40@huawei.com> - 2:2.10.6-8
 - rebuild for libwebp-1.1.0
 
