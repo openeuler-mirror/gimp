@@ -1,0 +1,25 @@
+diff --git a/Makefile.am b/Makefile.am
+index 5321a0c7d5..e6b16a66e6 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -142,16 +142,10 @@ CLEANFILES = $(generated_sources)
+ # already exists because then we are probably working with a tarball
+ # in which case the git-version.h we ship is correct.
+ git-version.h: update-git-version-header
+-	@if test -e "$(top_srcdir)/.git"; then \
+-	  git_version="`git --git-dir=$(top_srcdir)/.git describe --always`"; \
+-	  git_version_abbrev="`git --git-dir=$(top_srcdir)/.git rev-parse --short HEAD`"; \
+-	  git_last_commit_year="`git --git-dir=$(top_srcdir)/.git log -n1 --reverse --pretty=%ci | cut -b 1-4`"; \
+-	elif test ! -f "$@"; then \
+-	  git_version="Unknown, shouldn't happen"; \
+-	  git_version_abbrev="$$git_version"; \
+-	  git_last_commit_timestamp=-1; \
+-	  git_last_commit_year="`date -u '+%Y'`"; \
+-	fi; \
++	git_version="`basename \`pwd\`` (OBS AppImage)"; \
++	git_version_abbrev="`basename \`pwd\` | sed 's,gimp-\(.*\)+git\(.*\)\.\(.*\),\3,g'`"; \
++	git_last_commit_year="`date -u '+%Y'`"; \
++	git_last_commit_timestamp=-1; \
+ 	if test -n "$$git_version"; then \
+ 	  echo "#ifndef __GIT_VERSION_H__" > "$@.tmp"; \
+ 	  echo "#define __GIT_VERSION_H__" >> "$@.tmp"; \

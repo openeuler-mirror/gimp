@@ -1,259 +1,424 @@
+%define requires_file() %( readlink -f '%*' | LC_ALL=C xargs -r rpm -q --qf 'Requires: %%{name} >= %%{epoch}:%%{version}\\n' -f | sed -e 's/ (none):/ /' -e 's/ 0:/ /' | grep -v "is not")
+
+%bcond_without is_git_build
+%bcond_without binreloc
+
+%define alsa_version            1.0.0
+%define appstream_glib_version  0.7.7
+%define atk_version             2.4.0
+%define babl_version            0.1.82
+%define cairo_version           1.14.0
+%define cairo_pdf_version       1.12.2
+%define dbus_glib_version       0.70
+%define gdk_pixbuf_version      2.30.8
+%define fontconfig_version      2.12.4
+%define freetype2_version       2.1.7
+%define gdk_pixbuf_version      2.30.8
+%define gegl04_version          0.4.26
+%define gexiv2_version          0.10.6
+%define glib_version            2.56.2
+%define gtk3_version            3.22.29
+%define gudev_version           167
+%define harfbuzz_version        1.0.5
+%define lcms2_version           2.8
+%define libexif_version         0.6.15
+%define libheif_version         1.5.2
+%define liblzma_version         5.0.0
+%define libmypaint_version      1.4.0
+%define libopenjp2_version      2.1.0
+%define libpng_version          1.6.25
+%define librsvg_version         2.40.6
+%define libunwind_version       1.1.0
+%define libwebp_version         0.6.0
+%define mypaint_brushes_version 1.3.0
+%define OpenEXR_version         1.6.1
+%define pango_version           1.44.0
+%define poppler_data_version    0.4.9
+%define poppler_glib_version    0.69.0
+%define vapigen_version         0.40.0
+%define libvala_version         0.40.0
+%define webkit2gtk_version      2.20.3
+
+%global abiver 5
+%global apiver 3.0
+
 Name:           gimp
-Version:        2.10.6
-Release:        7
+Version:        2.99.6
+Release:        1
 Epoch:          2
-Summary:        A versatile graphics manipulation package
-License:        GPLv3+ and GPLv3
-URL:            http://www.gimp.org/
-
-Source0:        http://download.gimp.org/pub/gimp/v2.10/gimp-2.10.6.tar.bz2
-Patch6000:      backport-CVE-2018-12713.patch
-
-%global apiversion 2.0
-%global textversion 20
-%global allversion 2.10
-
-BuildRequires:  alsa-lib-devel >= 1.0.0 libgudev1-devel >= 167 libgexiv2-devel >= 0.10.6 librsvg2-devel >= 2.40.6 libpng-devel >= 1.6.25 libtiff-devel
-BuildRequires:  lcms2-devel >= 2.8 harfbuzz-devel >= 0.9.19 glib2-devel >= 2.54.2 gtk2-devel >= 2.24.10 gegl04-devel >= 0.4.6 gdk-pixbuf2-devel >= 2.30.8
-BuildRequires:  atk-devel >= 2.2.0 babl-devel >= 0.1.56 cairo-devel >= 1.12.2 bzip2-devel fontconfig-devel >= 2.12.4 freetype-devel >= 2.1.7 libX11-devel
-BuildRequires:  libgs-devel iso-codes-devel libjpeg-devel libmng-devel libwebp-devel >= 0.6.0 pango-devel >= 1.29.4 poppler-glib-devel >= 0.44.0
-BuildRequires:  libwmf-devel >= 0.2.8 libmypaint-devel >= 1.3.0 mypaint-brushes-devel >= 1.3.0 OpenEXR-devel >= 1.6.1 openjpeg2-devel >= 2.1.0
-BuildRequires:  poppler-data-devel >= 0.4.7 pycairo-devel >= 1.0.2 pygtk2-devel >= 2.10.4 pygobject2-devel python2-devel >= 2.5.0 xz-devel >= 5.0.0
-BuildRequires:  perl >= 5.10.0 libappstream-glib gtk-doc >= 1.0 gegl04-tools libXpm-devel pkgconfig zlib-devel
-BuildRequires:  libXmu-devel gettext >= 0.19 chrpath >= 0.13-5 intltool >= 0.40.1 gdb
-
-Requires:       babl%{?_isa} >= 0.1.56 fontconfig >= 2.12.4 freetype >= 2.1.7 pango >= 1.29.4 xdg-utils %{name}-libs = %{epoch}:%{version}-%{release}
-Requires:       gegl04%{?_isa} >= 0.4.6 glib2 >= 2.54.0 gtk2 >= 2.24.10 pygtk2 >= 2.10.4 hicolor-icon-theme
-Requires:       %{name}-libs = %{epoch}:%{version}-%{release}
-
-Obsoletes:      gimp-help-browser < %{epoch}:%{version}-%{release}
-Conflicts:      gimp-help-browser < %{epoch}:%{version}-%{release}
-Obsoletes:      gimp-unstable < 2:2.10
-Conflicts:      gimp-unstable < 2:2.10
+Summary:        The GNU Image Manipulation Program
+License:        GPL-3.0-or-later
+Group:          Productivity/Graphics/Bitmap Editors
+URL:            https://www.gimp.org/
+Source:         https://download.gimp.org/mirror/pub/gimp/v2.99/%{name}-%{version}.tar.bz2
+Source1:        macros.gimp
+Source2:        autogen.sh
+Source3:        MAINTAINERS
+Source98:       gimp-rpmlintrc
+Source99:       baselibs.conf
+Patch0:         git_info_from_dirname.patch
+BuildRequires:  autoconf
+BuildRequires:  automake
+BuildRequires:  libtool
+BuildRequires:  aalib-devel
+BuildRequires:  babl-vala >= %{babl_version}
+BuildRequires:  fdupes
+BuildRequires:  gcc-c++
+BuildRequires:  gegl04 >= %{gegl04_version}
+BuildRequires:  ghostscript-devel
+BuildRequires:  glib-networking
+BuildRequires:  gtk-doc
+BuildRequires:  intltool >= 0.40.1
+BuildRequires:  libwmf-devel >= 0.2.8
+BuildRequires:  pkgconfig
+BuildRequires:  python3 >= 3.6.0
+BuildRequires:  python3-gobject
+BuildRequires:  xdg-utils
+BuildRequires:  pkgconfig(OpenEXR) >= %{OpenEXR_version}
+BuildRequires:  pkgconfig(alsa) >= %{alsa_version}
+BuildRequires:  pkgconfig(appstream-glib) >= %{appstream_glib_version}
+BuildRequires:  pkgconfig(atk) >= %{atk_version}
+BuildRequires:  pkgconfig(babl) >= %{babl_version}
+BuildRequires:  pkgconfig(bzip2)
+BuildRequires:  pkgconfig(cairo) >= %{cairo_version}
+BuildRequires:  pkgconfig(cairo-pdf) >= %{cairo_pdf_version}
+BuildRequires:  pkgconfig(dbus-glib-1) >= %{dbus_glib_version}
+BuildRequires:  pkgconfig(fontconfig) >= %{fontconfig_version}
+BuildRequires:  pkgconfig(freetype2) >= %{freetype2_version}
+BuildRequires:  pkgconfig(gdk-pixbuf-2.0) >= %{gdk_pixbuf_version}
+BuildRequires:  pkgconfig(gegl-0.4) >= %{gegl04_version}
+BuildRequires:  pkgconfig(gexiv2) >= %{gexiv2_version}
+BuildRequires:  pkgconfig(gjs-1.0)
+BuildRequires:  pkgconfig(glib-2.0) >= %{glib_version}
+BuildRequires:  pkgconfig(gobject-introspection-1.0)
+BuildRequires:  pkgconfig(gtk+-3.0) >= %{gtk3_version}
+BuildRequires:  pkgconfig(gudev-1.0) >= %{gudev_version}
+BuildRequires:  pkgconfig(harfbuzz) >= %{harfbuzz_version}
+BuildRequires:  pkgconfig(iso-codes)
+BuildRequires:  pkgconfig(lcms2) >= %{lcms2_version}
+BuildRequires:  pkgconfig(libarchive)
+BuildRequires:  pkgconfig(libexif) >= %{libexif_version}
+BuildRequires:  pkgconfig(libjpeg)
+BuildRequires:  pkgconfig(liblzma) >= %{liblzma_version}
+BuildRequires:  pkgconfig(libmng)
+BuildRequires:  pkgconfig(libmypaint) >= %{libmypaint_version}
+BuildRequires:  pkgconfig(libopenjp2) >= %{libopenjp2_version}
+BuildRequires:  pkgconfig(libpng) >= %{libpng_version}
+BuildRequires:  pkgconfig(librsvg-2.0) >= %{librsvg_version}
+BuildRequires:  pkgconfig(libtiff-4)
+BuildRequires:  pkgconfig(libunwind) >= %{libunwind_version}
+BuildRequires:  pkgconfig(libwebp) >= %{libwebp_version}
+BuildRequires:  pkgconfig(luajit)
+BuildRequires:  pkgconfig(mypaint-brushes-1.0) >= %{mypaint_brushes_version}
+BuildRequires:  pkgconfig(pango) >= %{pango_version}
+BuildRequires:  pkgconfig(poppler-data) >= %{poppler_data_version}
+BuildRequires:  pkgconfig(poppler-glib) >= %{poppler_glib_version}
+BuildRequires:  pkgconfig(shared-mime-info)
+BuildRequires:  pkgconfig(vapigen) >= %{vapigen_version}
+BuildRequires:  pkgconfig(webkit2gtk-4.0) >= %{webkit2gtk_version}
+BuildRequires:  pkgconfig(x11)
+BuildRequires:  pkgconfig(xcursor)
+BuildRequires:  pkgconfig(xext)
+BuildRequires:  pkgconfig(xfixes)
+BuildRequires:  pkgconfig(xmu)
+BuildRequires:  pkgconfig(xpm)
+BuildRequires:  pkgconfig(zlib)
+%requires_eq    gegl-0_4
+Requires:       gjs
+Requires:       libgimp-3_0-0 = %{epoch}:%{version}
+Requires:       libgimpui-3_0-0 = %{epoch}:%{version}
+Requires:       luajit
+Requires:       shared-mime-info
+Requires:       xdg-utils
+Recommends:     %{name}-plugins-python3 = %{epoch}:%{version}
+Recommends:     iso-codes
+Suggests:       AdobeICCProfiles
+Provides:       gimp-2.0 = %{epoch}:%{version}
+Provides:       gimp(abi) = %{abiver}
+Provides:       gimp(api) = %{apiver}
 
 %description
-GIMP is a cross-platform image editor available for GNU/Linux, OS X, Windows and more operating systems.
-It is free software, you can change its source code and distribute your changes.
-Whether you are a graphic designer, photographer, illustrator, or scientist,
-GIMP provides you with sophisticated tools to get your job done. You can further enhance
-your productivity with GIMP thanks to many customization options and 3rd party plugins.
+The GIMP is an image composition and editing program, which can be
+used for creating logos and other graphics for Web pages. The GIMP
+offers many tools and filters, and provides a large image
+manipulation toolbox, including channel operations and layers,
+effects, subpixel imaging and antialiasing, and conversions, together
+with multilevel undo. The GIMP offers a scripting facility, but many
+of the included scripts rely on fonts that we cannot distribute.
 
-%package        libs
-Summary:        Libraries for %{name}
-License:        LGPLv3+
+%package -n libgimp-3_0-0
+Summary:        The GNU Image Manipulation Program - Libraries
+Group:          System/Libraries
 
-Obsoletes:      gimp-unstable-libs < 2:2.10
-Conflicts:      gimp-unstable-libs < 2:2.10
+%requires_file %{_libdir}/libbabl-0.1.so
+%requires_file %{_libdir}/libgegl-0.4.so
+%requires_file %{_libdir}/libgexiv2.so
 
-%description    libs
-Libraries for %{name}.
+%description -n libgimp-3_0-0
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
 
-%package        devel
-Summary:        GIMP development kit
-License:        LGPLv3+
-Requires:       gimp-libs = %{epoch}:%{version}-%{release} glib2-devel rpm >= 4.11.0
-Requires:       gimp-devel-tools = %{epoch}:%{version}-%{release} gtk2-devel pkgconfig
+This package provides GIMP libraries.
 
-Provides:       %{name}-devel-tools%{?_isa} %{name}-devel-tools
-Obsoletes:      %{name}-devel-tools
-Obsoletes:      gimp-unstable-devel < 2:2.10
-Conflicts:      gimp-unstable-devel < 2:2.10
-Obsoletes:      gimp-unstable-devel-tools < 2:2.10
-Conflicts:      gimp-unstable-devel-tools < 2:2.10
+%package -n libgimpui-3_0-0
+Summary:        The GNU Image Manipulation Program - UI Libraries
+Group:          System/Libraries
 
-%description    devel
-GIMP development kit
+%description -n libgimpui-3_0-0
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
 
-%package        help
-Summary:        Including man files for gimp
-Requires:       man
+This package provides GIMP UI libraries.
 
-%description    help
-This contains man files for the using of gimp.
+%package plugin-python3
+Summary:        The GNU Image Manipulation Program - python3 goject introspection plugins
+Group:          Productivity/Graphics/Bitmap Editors
+Requires:       %{name} = %{epoch}:%{version}
+Requires:       python3 >= 3.6.0
+Requires:       python3-gobject
+Supplements:    %{name}
+Provides:       gimp-plugins-python3 = %{epoch}:%{version}-%{release}
+Obsoletes:      gimp-plugins-python3 < %{epoch}:%{version}-%{release}
+%description plugin-python3
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
+
+
+%package vala
+Summary:        The GNU Image Manipulation Program - Vala development files
+Group:          Productivity/Graphics/Bitmap Editors
+Requires:       %{name}-devel = %{epoch}:%{version}
+%description vala
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
+
+%package plugin-aa
+Summary:        The GNU Image Manipulation Program -- ASCII-Art output plugin
+Group:          Productivity/Graphics/Bitmap Editors
+Requires:       %{name} = %{epoch}:%{version}
+Supplements:    (%{name} and libaa1)
+
+%description plugin-aa
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
+
+%package devel
+Summary:        The GNU Image Manipulation Program
+Group:          Development/Libraries/Other
+Requires:       libgimp-3_0-0 = %{epoch}:%{version}
+Requires:       libgimpui-3_0-0 = %{epoch}:%{version}
+Provides:       gimp-devel = %{epoch}:%{version}
+Provides:       gimp-doc = 2.6.4
+Obsoletes:      gimp-doc < 2.6.4
+Obsoletes:      gimp-unstable-devel < 2.6.0
+
+%description devel
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
+
+This subpackage contains libraries and header files for developing
+applications that want to make use of the GIMP libraries.
+
+%package extension-goat-excercises
+Summary:        The GNU Image Manipulation Program
+Group:          Development/Libraries/Other
+Requires:       libgimpui-3_0-0 = %{epoch}:%{version}
+Requires:       gimp-vala = %{epoch}:%{version}
+Requires:       gimp-devel = %{epoch}:%{version}
+Requires:       gimp-plugin-python3 = %{epoch}:%{version}
+
+%description extension-goat-excercises
+The GIMP is an image composition and editing program. GIMP offers
+many tools and filters, and provides a large image manipulation
+toolbox and scripting.
+
+This subpackage contains example the goat extension examples
+that extend gimp.
+
+
 
 %prep
-%autosetup -n %{name}-%{version} -p1
+%autosetup -p1
+chmod 744 %{SOURCE2}
+cp %{SOURCE2} .
+cp %{SOURCE3} .
 
 %build
+%define _lto_cflags %{nil}
+NOCONFIGURE=1 ./autogen.sh
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+test -x "$(type -p %{_bindir}/gcc-7)" && export CC="%{_bindir}/gcc-7"
+test -x "$(type -p %{_bindir}/g++-7)" && export CXX="%{_bindir}/g++-7"
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export CFLAGS="%{optflags} -fno-strict-aliasing"
 %configure \
-    --enable-mp \
-    --enable-python \
-    --disable-static \
-    --with-print \
-    --with-poppler \
-    --with-gudev --without-hal \
-    --without-webkit \
-    --with-lcms=lcms2 \
-    --enable-gimp-console \
-    --enable-default-binary=yes \
-    --without-aa \
-    --with-linux-input \
-    --with-webp \
-    --with-gvfs \
-    --with-alsa \
-    --with-dbus \
-    --with-script-fu \
-    --with-cairo-pdf \
-    --without-appdata-test \
-    --with-libtiff \
-    --with-libjpeg \
-    --with-libpng \
-    --with-libmng \
-    --with-libexif \
-    --with-librsvg \
-    --with-libxpm
+	--disable-silent-rules \
+	--disable-static\
+	--libexecdir=%{_prefix}/lib\
+	--enable-default-binary\
+    --enable-binreloc \
+	--enable-mp
+
+# Safety check for ABI version change.
+vabi=$(printf "%%d" $(sed -n '/#define GIMP_MODULE_ABI_VERSION/{s/.* //;p}' libgimpmodule/gimpmodule.h))
+if test "x${vabi}" != "x%{abiver}"; then
+   : Error: Upstream ABI version is now ${vabi}, expecting %{abiver}.
+   : Update the apiver macro and rebuild.
+   exit 1
+fi
+# Safety check for API version change.
+vapi=$(sed -n '/#define GIMP_API_VERSION/{s/.* //;p}' libgimpbase/gimpversion.h | sed -e 's@"@@g')
+if test "x${vapi}" != "x%{apiver}"; then
+   : Error: Upstream API version is now ${vapi}, expecting %{apiver}.
+   : Update the apiver macro and rebuild.
+   exit 1
+fi
 
 %make_build
 
-gimp_pc_extract_normalize() {
-    PKG_CONFIG_PATH="$PWD" \
-        pkg-config --variable="$1" gimp-2.0 | \
-    sed \
-        -e 's|^/usr/share/man|%{_mandir}|' \
-        -e 's|^/usr/share/info|%{_infodir}|' \
-        -e 's|^/usr/include|%{_includedir}|' \
-        -e 's|^/usr/lib64|%{_libdir}|' \
-        -e 's|^/usr/bin|%{_bindir}|' \
-        -e 's|^/usr|%{_exec_prefix}|' \
-        -e 's|^/var|%{_localstatedir}|' \
-        -e 's|^/usr/share|%{_datadir}|' \
-        -e 's|^/var/lib|%{_sharedstatedir}|' \
-        -e 's|^/etc|%{_sysconfdir}|' \
-        -e 's|^/usr/libexec|%{_libexecdir}|' \
-        -e 's|^/usr/sbin|%{_sbindir}|' \
-        -e 's|^/usr|%{_prefix}|'
-}
-
-_gimp_sysconfdir="$(gimp_pc_extract_normalize gimpsysconfdir)"
-_gimp_localedir="$(gimp_pc_extract_normalize gimplocaledir)"
-_gimp_datadir="$(gimp_pc_extract_normalize gimpdatadir)"
-_gimp_libdir="$(gimp_pc_extract_normalize gimplibdir)"
-_gimp_scriptdir="${_gimp_datadir}/scripts"
-_gimp_plugindir="${_gimp_libdir}/plug-ins"
-
-cat << EOF > macros.gimp
-#RPM macros for GIMP
-
-%%_gimp_sysconfdir ${_gimp_sysconfdir}
-%%_gimp_localedir ${_gimp_localedir}
-%%_gimp_datadir ${_gimp_datadir}
-%%_gimp_libdir ${_gimp_libdir}
-%%_gimp_scriptdir ${_gimp_scriptdir}
-%%_gimp_plugindir ${_gimp_plugindir}
-EOF
-
 %install
 %make_install
-install -D -m0644 macros.gimp %{buildroot}%{_rpmconfigdir}/macros.d/macros.gimp
-find %buildroot -type f -print0 | xargs -0 -L 20 chrpath --delete --keepgoing 2>/dev/null || :
+rm %{buildroot}%{_libdir}/gimp/2.99/*/*.*a
+touch gimp_all_parts.lang
+for lang_part in gimp30 gimp30-libgimp gimp30-python gimp30-script-fu gimp30-std-plug-ins ; do
+%find_lang ${lang_part} %{?no_lang_C} ${lang_part}.lang
+cat ${lang_part}.lang >> gimp_all_parts.lang
+done
+echo "%%defattr(-,root,root)" >plugins.list
+echo "%%defattr(-,root,root)" >plugins-python.list
+for PLUGIN in %{buildroot}%{_libdir}/gimp/2.99/plug-ins/* ; do
+    if grep -q '^#!.*python' ${PLUGIN}/* ; then
+	echo "${PLUGIN#%{buildroot}}" >>plugins-python.list
+    else
+	echo "${PLUGIN#%{buildroot}}" >>plugins.list
+    fi
+done
+cat gimp_all_parts.lang >> plugins.list
+find %{buildroot} -type f -name "*.la" -delete -print
+install -d %{buildroot}%{_sysconfdir}/rpm
+sed -e "s/@GIMP_APIVER@/%{apiver}/;s/@GIMP_ABIVER@/%{abiver}/" \
+    < $RPM_SOURCE_DIR/macros.gimp > macros.gimp
+install -m 644 -c macros.gimp \
+           %{buildroot}%{_sysconfdir}/rpm/macros.gimp
+%fdupes %{buildroot}%{_datadir}/gtk-doc/
+%fdupes %{buildroot}%{_libdir}/gimp/2.99/python/
+%fdupes %{buildroot}%{_datadir}/gimp/2.99/
 
-%delete_la
+%post -n libgimp-3_0-0 -p /sbin/ldconfig
+%postun -n libgimp-3_0-0 -p /sbin/ldconfig
+%post -n libgimpui-3_0-0 -p /sbin/ldconfig
+%postun -n libgimpui-3_0-0 -p /sbin/ldconfig
 
-find %{buildroot}%{_libdir}/gimp/%{apiversion}/* -type d | sed "s@^%{buildroot}@%%dir @g" >> gimp-plugin-files
-find %{buildroot}%{_libdir}/gimp/%{apiversion} -type f | sed "s@^%{buildroot}@@g" | grep -v '\.a$' > gimp-plugin-files
+%files -f plugins.list
+%license COPYING LICENSE
+%doc AUTHORS NEWS* README MAINTAINERS HACKING
+%{_bindir}/gimp
+%{_bindir}/gimp-2.*
+%{_bindir}/gimp-console
+%{_bindir}/gimp-console-2.*
+%{_bindir}/gimp-test-clipboard-2.99
+%{_prefix}/lib/gimp-debug-tool-2.99
+%dir %{_datadir}/metainfo
+%{_datadir}/metainfo/gimp-data-extras.metainfo.xml
+%{_datadir}/metainfo/org.gimp.GIMP.appdata.xml
+%{_datadir}/applications/gimp.desktop
+%{_datadir}/icons/hicolor/*/apps/*.png
+%{_datadir}/gimp/
+%{_libdir}/gimp/2.99/environ/default.env
+%{_libdir}/gimp/2.99/interpreters/default.interp
+%{_libdir}/gimp/2.99/modules/libcolor-selector-cmyk.so
+%{_libdir}/gimp/2.99/modules/libcolor-selector-water.so
+%{_libdir}/gimp/2.99/modules/libcolor-selector-wheel.so
+%{_libdir}/gimp/2.99/modules/libcontroller-linux-input.so
+%{_libdir}/gimp/2.99/modules/libcontroller-midi.so
+%{_libdir}/gimp/2.99/modules/libdisplay-filter-aces-rrt.so
+%{_libdir}/gimp/2.99/modules/libdisplay-filter-clip-warning.so
+%{_libdir}/gimp/2.99/modules/libdisplay-filter-color-blind.so
+%{_libdir}/gimp/2.99/modules/libdisplay-filter-gamma.so
+%{_libdir}/gimp/2.99/modules/libdisplay-filter-high-contrast.so
+%{_mandir}/man?/gimp.*
+%{_mandir}/man?/gimp-2*
+%{_mandir}/man?/gimp-console.*
+%{_mandir}/man?/gimp-console-2*
+%{_mandir}/man?/gimprc.*
+%{_mandir}/man?/gimprc-2*
+%{_mandir}/man?/gimptool-2*
+%dir %{_sysconfdir}/gimp
+%dir %{_sysconfdir}/gimp/2.99
+%config %{_sysconfdir}/gimp/2.99/*rc
+%config %{_sysconfdir}/gimp/2.99/*css
+%exclude %{_libdir}/gimp/2.99/plug-ins/file-aa
 
-grep "\.py$" gimp-plugin-files > gimp-plugin-files-py
-for file in $(cat gimp-plugin-files-py); do
-    for newfile in ${file}c ${file}o; do
-        grep -F -q -x "$newfile" gimp-plugin-files || echo "$newfile"
-    done
-done >> gimp-plugin-files
+%files plugin-aa
+%{_libdir}/gimp/2.99/plug-ins/file-aa
 
-%py_byte_compile %{__python2} %{buildroot}%{_libdir}/gimp/%{apiversion}
-
-%find_lang gimp%{textversion}
-%find_lang gimp%{textversion}-libgimp
-%find_lang gimp%{textversion}-tips
-%find_lang gimp%{textversion}-python
-%find_lang gimp%{textversion}-std-plug-ins
-%find_lang gimp%{textversion}-script-fu
-
-cat gimp%{textversion}.lang \
-    gimp%{textversion}-std-plug-ins.lang \
-    gimp%{textversion}-script-fu.lang \
-    gimp%{textversion}-libgimp.lang \
-    gimp%{textversion}-tips.lang \
-    gimp%{textversion}-python.lang > gimp-all.lang
-
-cat gimp-plugin-files gimp-all.lang > gimp.files
-
-ln -snf gimp-%{allversion} %{buildroot}%{_bindir}/gimp
-ln -snf gimp-%{allversion}.1 %{buildroot}%{_mandir}/man1/gimp.1
-ln -snf gimp-console-%{allversion} %{buildroot}/%{_bindir}/gimp-console
-ln -snf gimptool-%{apiversion} %{buildroot}%{_bindir}/gimptool
-ln -snf gimptool-%{apiversion}.1 %{buildroot}%{_mandir}/man1/gimptool.1
-ln -snf gimprc-%{allversion}.5 %{buildroot}/%{_mandir}/man5/gimprc.5
-ln -snf gimp-console-%{allversion}.1 %{buildroot}/%{_mandir}/man1/gimp-console.1
-
-grep -E -rl '^#!\s*%{_bindir}/env\s+python' --include=\*.py "%{buildroot}" |
-    while read file; do
-        sed -r '1s,^#!\s*%{_bindir}/env\s+python,#!%{__python},' -i "$file"
-    done
-
-%check
-
-make check %{?_smp_mflags}
-
-%ldconfig_scriptlets libs
-
-%files -f gimp.files
-%license COPYING
-%doc AUTHORS README
-%doc docs/*.xcf*
+%files -n libgimp-3_0-0
 %dir %{_datadir}/gimp
-%dir %{_datadir}/gimp/2.0
+%dir %{_datadir}/gimp/2.99
 %dir %{_libdir}/gimp
-%dir %{_libdir}/gimp/2.0
-%dir %{_libdir}/gimp/2.0/environ
-%dir %{_libdir}/gimp/2.0/interpreters
-%dir %{_libdir}/gimp/2.0/modules
-%dir %{_libdir}/gimp/2.0/plug-ins
-%dir %{_libdir}/gimp/2.0/python
+%dir %{_libdir}/gimp/2.99
+%dir %{_libdir}/gimp/2.99/environ
+%dir %{_libdir}/gimp/2.99/interpreters
+%dir %{_libdir}/gimp/2.99/modules
+%dir %{_libdir}/gimp/2.99/plug-ins
+%dir %{_libdir}/gimp/2.99/extensions
+%{_libdir}/libgimp-3.0.so.*
+%{_libdir}/libgimpbase-3.0.so.*
+%{_libdir}/libgimpcolor-3.0.so.*
+%{_libdir}/libgimpconfig-3.0.so.*
+%{_libdir}/libgimpmath-3.0.so.*
+%{_libdir}/libgimpmodule-3.0.so.*
 
-%{_datadir}/applications/*.desktop
-%{_datadir}/metainfo/*.appdata.xml
-%{_datadir}/metainfo/*.metainfo.xml
-%{_datadir}/gimp/2.0/*
+%files -n libgimpui-3_0-0
+%{_libdir}/libgimpthumb-3.0.so.*
+%{_libdir}/libgimpui-3.0.so.*
+%{_libdir}/libgimpwidgets-3.0.so.*
 
-%dir /etc/gimp
-%dir /etc/gimp/2.0
-%config(noreplace) /etc/gimp/2.0/controllerrc
-%config(noreplace) /etc/gimp/2.0/gimprc
-%config(noreplace) /etc/gimp/2.0/gtkrc
-%config(noreplace) /etc/gimp/2.0/unitrc
-%config(noreplace) /etc/gimp/2.0/sessionrc
-%config(noreplace) /etc/gimp/2.0/templaterc
-%config(noreplace) /etc/gimp/2.0/menurc
+%files plugin-python3 -f plugins-python.list
+%{_libdir}/gimp/2.99/environ/python.env
+%{_libdir}/gimp/2.99/interpreters/pygimp.interp
+%{_libdir}/girepository-1.0/Gimp-3.0.typelib
+%{_libdir}/girepository-1.0/GimpUi-3.0.typelib
 
-/usr/bin/gimp-2.10
-/usr/bin/gimp-console-2.10
-/usr/bin/gimp
-/usr/bin/gimp-console
-/usr/bin/gimp-test-clipboard-2.0
-/usr/libexec/gimp-debug-tool-2.0
-/usr/share/icons/hicolor/*/apps/gimp.png
-
-%files libs
-%{_libdir}/libgimp*so.*
+%files vala
+%{_datadir}/vala/vapi/gimp-3.deps
+%{_datadir}/vala/vapi/gimp-3.vapi
+%{_datadir}/vala/vapi/gimp-ui-3.deps
+%{_datadir}/vala/vapi/gimp-ui-3.vapi
 
 %files devel
-%doc HACKING README.i18n
-%doc /usr/share/gtk-doc
-%dir %{_libdir}/gimp
-%dir %{_libdir}/gimp/2.0
-%dir %{_libdir}/gimp/2.0/modules
+%doc README.i18n
+%{_bindir}/gimptool-2.99
+%{_includedir}/gimp-3.0/
 %{_libdir}/*.so
-%{_libdir}/pkgconfig/*
-/usr/share/aclocal/*.m4
-/usr/include/gimp-2.0
-/usr/lib/rpm/macros.d/macros.gimp
-/usr/bin/gimptool-2.0
-/usr/bin/gimptool
+%{_datadir}/aclocal/gimp-3.0.m4
+%{_libdir}/pkgconfig/gimp-3.0.pc
+%{_libdir}/pkgconfig/gimpthumb-3.0.pc
+%{_libdir}/pkgconfig/gimpui-3.0.pc
+%dir %{_datadir}/gtk-doc
+%{_datadir}/gtk-doc/html/*
+%dir %{_datadir}/locale
+%{_datadir}/locale/*/LC_MESSAGES/*
+%config %{_sysconfdir}/rpm/macros.gimp
+%{_datadir}/gir-1.0/Gimp-3.0.gir
+%{_datadir}/gir-1.0/GimpUi-3.0.gir
 
-%files help
-%{_mandir}/man*/*
+%files extension-goat-excercises
+%{_libdir}/gimp/2.99/extensions/org.gimp.extension.goat-exercises
 
 %changelog
+* Wed Aug 25 2021 chenchen <chen_aka_jan@163.com> - 2:2.99.6-1
+- update to 2.99.6
+
 * Sat Mar 21 2020 hexiujun <hexiujun1@huawei.com> - 2:2.10.6-7
 - Type:NA
 - ID:NA
