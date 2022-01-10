@@ -1,6 +1,6 @@
 Name:           gimp
 Version:        2.10.6
-Release:        9
+Release:        10
 Epoch:          2
 Summary:        A versatile graphics manipulation package
 License:        GPLv3+ and GPLv3
@@ -8,6 +8,7 @@ URL:            http://www.gimp.org/
 
 Source0:        http://download.gimp.org/pub/gimp/v2.10/gimp-2.10.6.tar.bz2
 Patch6000:      backport-CVE-2018-12713.patch
+Patch6001:      CVE-2021-45463.patch
 
 %global apiversion 2.0
 %global textversion 20
@@ -254,6 +255,9 @@ make check %{?_smp_mflags}
 %{_mandir}/man*/*
 
 %changelog
+* Fri Jan 07 2022 yaoxin <yaoxin30@huawei.com> - 2:2.10.6-10
+- Fix CVE-2021-45463
+
 * Thu 22 Jul 2021 sunguoshuai <sunguoshuai@huawei.com> - 2:2.10.6-9
 - Del useless buildrequire gdb
 
