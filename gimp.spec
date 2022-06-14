@@ -44,7 +44,7 @@
 
 Name:           gimp
 Version:        2.99.6
-Release:        1
+Release:        2
 Epoch:          2
 Summary:        The GNU Image Manipulation Program
 License:        GPL-3.0-or-later
@@ -57,7 +57,7 @@ Source3:        MAINTAINERS
 Source98:       gimp-rpmlintrc
 Source99:       baselibs.conf
 Patch0:         git_info_from_dirname.patch
-BuildRequires:  autoconf
+BuildRequires:  autoconf glibc-all-langpacks
 BuildRequires:  automake
 BuildRequires:  libtool
 BuildRequires:  aalib-devel
@@ -416,6 +416,9 @@ install -m 644 -c macros.gimp \
 %{_libdir}/gimp/2.99/extensions/org.gimp.extension.goat-exercises
 
 %changelog
+* Mon Jun 13 2022 houyingchao <houyingchao@h-partners.com> - 2:2.99.6-2
+- Fix compilation failed
+
 * Wed Aug 25 2021 chenchen <chen_aka_jan@163.com> - 2:2.99.6-1
 - update to 2.99.6
 
