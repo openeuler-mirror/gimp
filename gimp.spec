@@ -44,7 +44,7 @@
 
 Name:           gimp
 Version:        2.99.6
-Release:        2
+Release:        3
 Epoch:          2
 Summary:        The GNU Image Manipulation Program
 License:        GPL-3.0-or-later
@@ -108,7 +108,9 @@ BuildRequires:  pkgconfig(librsvg-2.0) >= %{librsvg_version}
 BuildRequires:  pkgconfig(libtiff-4)
 BuildRequires:  pkgconfig(libunwind) >= %{libunwind_version}
 BuildRequires:  pkgconfig(libwebp) >= %{libwebp_version}
+%ifnarch riscv64
 BuildRequires:  pkgconfig(luajit)
+%endif riscv64
 BuildRequires:  pkgconfig(mypaint-brushes-1.0) >= %{mypaint_brushes_version}
 BuildRequires:  pkgconfig(pango) >= %{pango_version}
 BuildRequires:  pkgconfig(poppler-data) >= %{poppler_data_version}
@@ -127,7 +129,9 @@ BuildRequires:  pkgconfig(zlib)
 Requires:       gjs
 Requires:       libgimp-3_0-0 = %{epoch}:%{version}
 Requires:       libgimpui-3_0-0 = %{epoch}:%{version}
+%ifnarch riscv64
 Requires:       luajit
+%endif
 Requires:       shared-mime-info
 Requires:       xdg-utils
 Recommends:     %{name}-plugins-python3 = %{epoch}:%{version}
@@ -416,6 +420,9 @@ install -m 644 -c macros.gimp \
 %{_libdir}/gimp/2.99/extensions/org.gimp.extension.goat-exercises
 
 %changelog
+* Tue Aug 23 2022 jchzhou <jchzhou@outlook.com> - 2:2.99.6-3
+- Excluding luajit deps for riscv64
+
 * Mon Jun 13 2022 houyingchao <houyingchao@h-partners.com> - 2:2.99.6-2
 - Fix compilation failed
 
